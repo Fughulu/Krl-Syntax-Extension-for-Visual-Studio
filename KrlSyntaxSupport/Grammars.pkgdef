@@ -1,0 +1,14 @@
+﻿; Registering the package
+[$RootKey$\InstalledProducts\KrlSyntaxSupportPackage]
+"Package"="{869ec567-f1cc-45d5-b729-6ea0e841b07e}"
+[$RootKey$\BindingPaths\{869ec567-f1cc-45d5-b729-6ea0e841b07e}]
+"$PackageFolder$"=""
+
+; Registering the TextMate grammar
+[$RootKey$\TextMate\Repositories]
+"KrlSyntaxSupport"="$PackageFolder$\Syntaxes"
+
+
+; Match file extensions with icons. See full icon list at https://glyphlist.azurewebsites.net/knownmonikers/
+[$RootKey$\ShellFileAssociations\.pkgdef]
+"DefaultIconMoniker"="KnownMonikers.ConfigurationEditor"
