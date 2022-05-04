@@ -1,0 +1,55 @@
+&ACCESS RV2
+&REL 5
+&COMMENT SGB LIBRARY V1.0
+&PARAM SERVOGUNTECH_VERSION = 3.0
+&PARAM DISKPATH = KRC:\R1\TP\ServoGun
+DEF KRLTemp( )
+END
+;------------------------------------------
+; decision of movementype
+;------------------------------------------
+
+GLOBAL DEF KRL_Temp(TargetPos:IN,HelpPos:IN,ContType:IN,MoveType:IN)
+   ;FOLD SGL_MoveToPos
+      DECL E6POS TargetPos, HelpPos
+      DECL SG_Cont_T ContType
+      DECL SG_MoveType_T MoveType
+      CONTINUE
+      IF ((ContType==#SOPEN) OR (ContType==#SCLOSE) OR (ContType==#CLS_OPEN)) THEN 
+         ; with respect second approximate positioning for PTP => LIN and LIN to PTP..
+         SWITCH MoveType
+            CASE #SG_PTP
+               PTP TargetPos C_DIS
+            CASE #SG_LIN
+               LIN TargetPos C_DIS C_DIS
+            CASE #SG_CIRC
+               CIRC HelpPos, TargetPos C_DIS C_DIS
+            CASE #SG_SPTP
+               SPTP TargetPos WITH $VEL_AXIS[1]= SVEL_JOINT( SG_VELOCITY), $TOOL= STOOL2( SG_FRAME), $BASE= SBASE( SG_FRAME.BASE_NO),$IPO_MODE= SIPO_MODE( SG_FRAME.IPO_FRAME), $LOAD= SLOAD( SG_FRAME.TOOL_NO), $ACC_AXIS[1]= SACC_JOINT( SG_PDAT_ACT), $APO= SAPO_PTP( SG_PDAT_ACT), $GEAR_JERK[1]= SGEAR_JERK( SG_PDAT_ACT) C_SPL
+            CASE #SG_SLIN
+               SLIN TargetPos WITH $VEL=SVEL_CP( SG_VELOCITY, , SG_LDAT_ACT), $TOOL=STOOL2( SG_FRAME), $BASE= SBASE( SG_FRAME.BASE_NO),$IPO_MODE=SIPO_MODE( SG_FRAME.IPO_FRAME), $LOAD=SLOAD( SG_FRAME.TOOL_NO), $ACC=SACC_CP( SG_LDAT_ACT), $APO=SAPO( SG_LDAT_ACT), $ORI_TYPE=SORI_TYP( SG_LDAT_ACT), $JERK=SJERK( SG_LDAT_ACT) C_SPL
+            CASE #SG_SCIRC
+               SCIRC HelpPos,TargetPos C_SPL
+         ENDSWITCH
+      ELSE
+         SWITCH MoveType
+            CASE #SG_PTP
+               PTP TargetPos
+            CASE #SG_LIN
+               LIN TargetPos
+            CASE #SG_CIRC
+               CIRC HelpPos, TargetPos
+            CASE #SG_SPTP
+               SPTP TargetPos WITH $VEL_AXIS[1]= SVEL_JOINT( SG_VELOCITY), $TOOL= STOOL2( SG_FRAME), $BASE= SBASE( SG_FRAME.BASE_NO),$IPO_MODE= SIPO_MODE( SG_FRAME.IPO_FRAME), $LOAD= SLOAD( SG_FRAME.TOOL_NO), $ACC_AXIS[1]= SACC_JOINT( SG_PDAT_ACT), $GEAR_JERK[1]= SGEAR_JERK( SG_PDAT_ACT)
+            CASE #SG_SLIN
+               SLIN TargetPos WITH $VEL=SVEL_CP( SG_VELOCITY, , SG_LDAT_ACT), $TOOL=STOOL2( SG_FRAME), $BASE= SBASE( SG_FRAME.BASE_NO),$IPO_MODE=SIPO_MODE( SG_FRAME.IPO_FRAME), $LOAD=SLOAD( SG_FRAME.TOOL_NO), $ACC=SACC_CP( SG_LDAT_ACT), $ORI_TYPE=SORI_TYP( SG_LDAT_ACT), $JERK=SJERK( SG_LDAT_ACT)
+            CASE #SG_SCIRC
+               SCIRC HelpPos,TargetPos
+         ENDSWITCH
+      ENDIF
+      CONTINUE
+   ;ENDFOLD
+END
+
+
+
